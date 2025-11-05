@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "OriVec"
+version = "0.1.0"
+description = "Compute orientation order parameters with point cloud ICP method."
+readme = "README.md"
+authors = [{name = "theNotfish", email = "taoyuze.lv@outlook.com"}]
+license = {text = "Proprietary"}
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "ase",
+    "open3d",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+]
+
+[project.optional-dependencies]
+develop = ["pytest", "typer"]
+
+[project.scripts]
+orivec = "orivec.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "."}
+packages = ["orivec"]
