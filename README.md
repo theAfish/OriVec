@@ -29,8 +29,10 @@ structure = get_order_parameters(
     elements={1: "Li", 2: "Mo", 3: "S"},
     selected_elements=["S"],
     regularize_orientations=True,
+    regularize_anchors=np.array([0.0, 0.0, 1.0]),
     parallel=True,
+    max_workers=8,
 )
 ```
 
-The resulting `ase.Atoms` object stores orientation vectors in `structure.arrays['orientation']`.
+The resulting `ase.Atoms` object stores orientation vectors in `structure.arrays['orientation']`, `structure.arrays['inlier_rmse']`
