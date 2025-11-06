@@ -9,6 +9,7 @@ import numpy as np
 from ase.io import write
 
 from .core import get_order_parameters
+from .ref_gen import generate_ref_motifs
 
 __all__ = ["main"]
 
@@ -124,9 +125,71 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def build_ref_generator_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="orivec gen-ref",
+        description="Generate reference motifs from symmetry-unique atoms.",
+    )
+    parser.add_argument(
+        "input",
+        type=Path,
+        help="Structure file readable by ASE (e.g. CIF, POSCAR).",
+    )
+    parser.add_argument(
+        "--rcut",
+        required=True,
+        type=float,
+        help="Radial cutoff in Angstrom for including neighbors (required).",
+    )
+    parser.add_argument(
+        "--output-prefix",
+        dest="out_base_name",
+        default="ref_motif",
+        help="Prefix applied to each generated motif file (default: ref_motif).",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        help="Directory where motif files are written (default: current directory).",
+    )
+    parser.add_argument(
+        "--symprec",
+        type=float,
+        default=1e-5,
+        help="Symmetry tolerance passed to spglib (default: 1e-5).",
+    )
+    parser.add_argument(
+        "--angle-tolerance",
+        type=float,
+        default=5.0,
+        help="Angular tolerance in degrees passed to spglib (default: 5.0).",
+    )
+    return parser
+
+
 def main(argv: Sequence[str] | None = None) -> int:
+    argv_list = list(argv) if argv is not None else sys.argv[1:]
+    if argv_list and argv_list[0] in {"gen-ref", "ref-gen"}:
+        ref_parser = build_ref_generator_parser()
+        ref_args = ref_parser.parse_args(argv_list[1:])
+        motifs = generate_ref_motifs(
+            base_file=str(ref_args.input),
+            r_cut=ref_args.rcut,
+            out_base_name=ref_args.out_base_name,
+            symprec=ref_args.symprec,
+            angle_tolerance=ref_args.angle_tolerance,
+            output_dir=ref_args.output_dir,
+        )
+        output_dir = ref_args.output_dir.resolve() if ref_args.output_dir else Path.cwd()
+        print(
+            "Generated "
+            f"{len(motifs)} motifs from {ref_args.input} using r_cut={ref_args.rcut} Angstrom. "
+            f"Files saved to {output_dir} with prefix {ref_args.out_base_name}_*.xyz"
+        )
+        return 0
+
     parser = build_parser()
-    args = parser.parse_args(argv)
+    args = parser.parse_args(argv_list)
 
     element_map = _parse_type_symbol_map(args.element_map)
     regularize_anchor = args.regularize_anchor if args.regularize_anchor is not None else args.ref_orientation

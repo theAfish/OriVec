@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "OriVec"
-version = "0.1.0"
-description = "Compute orientation order parameters with point cloud ICP method."
+version = "0.1.1"
+description = "Compute orientation order parameters in polycrystals with point cloud ICP method."
 readme = "README.md"
 authors = [{name = "theNotfish", email = "taoyuze.lv@outlook.com"}]
 license = {text = "Proprietary"}
@@ -14,6 +14,7 @@ dependencies = [
     "numpy",
     "ase",
     "open3d",
+    "spglib"
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
