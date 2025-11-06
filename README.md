@@ -16,6 +16,12 @@ orivec .\liquid.data .\ref_unit.xyz --element-map 1=Li,2=Mo,3=S --selected-eleme
 
 This command reads a LAMMPS data file, aligns local motifs to the reference geometry, stores the resulting orientation vectors in per-atom arrays, and writes the augmented structure to `liquid-orientations.xyz`.
 
+To generate the reference motifs from a base structure file:
+
+```powershell
+orivec gen-ref .\[your_structure_file] --rcut 6.2
+```
+
 ## Python API
 
 ```python
@@ -35,4 +41,16 @@ structure = get_order_parameters(
 )
 ```
 
-The resulting `ase.Atoms` object stores orientation vectors in `structure.arrays['orientation']`, `structure.arrays['inlier_rmse']`
+The resulting `ase.Atoms` object stores orientation vectors in `structure.arrays['orientation']`, `structure.arrays['inlier_rmse']`.
+
+
+Generate reference motifs from a base structure file:
+
+```python
+from orivec import generate_ref_motifs
+motifs = generate_ref_motifs(
+    base_file="your_structure_file",
+    r_cut=6.2,
+    out_base_name="ref_motif",
+)
+```
